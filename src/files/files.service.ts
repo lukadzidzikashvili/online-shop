@@ -32,6 +32,10 @@ export class FilesService {
       'images',
       user.id.toString(),
     );
+    if (!fs.existsSync(userFolder)) {
+      fs.mkdirSync(userFolder, { recursive: true });
+    }
+    const filePath = path.join(userFolder, fileName);
     const existingFiles = fs.readdirSync(userFolder);
     const existingFileNames = existingFiles.map((f) => f);
     if (existingFileNames.includes(fileName)) {
@@ -40,10 +44,6 @@ export class FilesService {
         HttpStatus.BAD_REQUEST,
       );
     }
-    if (!fs.existsSync(userFolder)) {
-      fs.mkdirSync(userFolder, { recursive: true });
-    }
-    const filePath = path.join(userFolder, fileName);
     try {
       fs.writeFileSync(filePath, file.buffer);
       return path.join(user.id.toString(), fileName);

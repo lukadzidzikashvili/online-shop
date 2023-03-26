@@ -20,6 +20,26 @@ export class PostsService {
     private fileService: FilesService,
   ) {}
 
+  async getAllPosts(): Promise<userPosts[]> {
+    const posts = await this.postsRepository
+      .createQueryBuilder('post')
+      .leftJoinAndSelect('post.category', 'category')
+      .leftJoinAndSelect('post.location', 'location')
+      .select([
+        'post',
+        'category.id',
+        'category.name',
+        'category.parentId',
+        'location.id',
+        'location.country',
+        'location.city',
+        'location.address',
+      ])
+      .getMany();
+
+    return posts;
+  }
+
   async createPost(
     createPostDto: CreatePostDto,
     user: Users,
